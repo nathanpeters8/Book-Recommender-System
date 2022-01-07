@@ -244,12 +244,13 @@ def select_book(itt):
         (str or None) - ISBN of selected book if selection exists
     '''
     isbns = sorted(itt)
+    print()
     print('All books:')
     print('----------')
     for i, isbn in enumerate(isbns):
         print(' ', i, '-->', isbn, itt[isbn][:60])
     print('-' * 40)
-    selection = input('Enter book number or return to quit: ')
+    selection = input('Enter book number or enter to go to customer list: ')
     return isbns[int(selection)] if selection else None
     
 def similar_books(key, cm, pm, itt, spm): 
@@ -270,14 +271,15 @@ def similar_books(key, cm, pm, itt, spm):
         if key != isbn:
             bk_lst.append((cm.loc[key, isbn], isbn))
     bk_lst.sort(reverse=True)
+    print()
     print('Books similar to', itt[key] + ':')
     print('-----------------' + '-' * (len(itt[key]) + 1))
     for i in range(5):
         print(str(i+1) + ':')
        #print(' ', bk_lst[i][0], '--', itt[bk_lst[i][1]][:80])
-        print(' Title:', itt[bk_lst[i][1]][:80])
+        print(itt[bk_lst[i][1]][:80])
        #print('  spm:', itt[spm[key][i]][:80])
-        print(' p_matrix:', pm.loc[key, bk_lst[i][1]])
+       #print(' Probability:', pm.loc[key, bk_lst[i][1]])
 
 ############################### MAIN #####################################        
     
@@ -294,6 +296,7 @@ def main1():
     selection = select_book(itt)
     while selection:
         similar_books(selection, count_matrix, p_matrix, itt, spm)
+        print()
         input('Enter to continue:')
         selection = select_book(itt)
     ######
@@ -344,6 +347,7 @@ def main2():
     selection = select_book(itt)
     while selection:
         similar_books(selection, count_matrix, p_matrix, itt, spm)
+        print()
         input('Enter to continue:')
         selection = select_book(itt)
 
@@ -358,7 +362,7 @@ def main2():
 
     
 if __name__ == "__main__":
-    main1()
+    main2()
     
     
     
