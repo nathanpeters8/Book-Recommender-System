@@ -122,7 +122,7 @@ def get_cust_id(conn):
         (int) - customer id
     '''
     c = conn.cursor()
-
+    print()
     print('CID       Name')
     print('-----     -----')
     rows = c.execute('SELECT * FROM Customers;').fetchall()
@@ -221,11 +221,28 @@ def get_recommendation(id, sparse_p_matrix, isbn_list, conn):
 ########################## HELPER FUNCTIONS ##################################
 
 def isbn_to_title(conn):
+    '''
+    Creates dictionary of book titles mapped to their ISBNs 
+    --------------------------------------------------------------
+    PARAMETERS:
+        conn - connection object to database
+    RETURN:
+        (dict) - dictionary with ISBNS as the keys, and book titles as the values
+    '''
+
     c = conn.cursor()
     query = 'SELECT isbn, book_title FROM Books;'
     return {row['isbn']: row['book_title'] for row in c.execute(query).fetchall()}
 
 def select_book(itt):
+    '''
+    prints list of all books in database and receives user input for a book selection
+    --------------------------------------------------------------
+    PARAMETERS:
+        itt(dict) - dictionary with ISBNS as the keys, and book titles as the values
+    RETURN:
+        (str or None) - ISBN of selected book if selection exists
+    '''
     isbns = sorted(itt)
     print('All books:')
     print('----------')
@@ -235,7 +252,19 @@ def select_book(itt):
     selection = input('Enter book number or return to quit: ')
     return isbns[int(selection)] if selection else None
     
-def similar_books(key, cm, pm, itt, spm): # an isbn, count_matrix, p_matrix, isbn_to_title
+def similar_books(key, cm, pm, itt, spm): 
+    '''
+    prints list of books similar to the user's selected book.
+    --------------------------------------------------------------
+    PARAMETERS:
+        key(str) - ISBN of selected book
+        cm(DataFrame) - confusion matrix of purchased books
+        pm(DataFrame) - probability matrix of purchased books
+        itt(dict) - dictionary with ISBNS as the keys, and book titles as the values
+        spm(DataFrame) - sparse probability matrix
+    RETURN:
+        N/A
+    '''
     bk_lst = []
     for isbn in cm.columns:
         if key != isbn:
@@ -244,10 +273,11 @@ def similar_books(key, cm, pm, itt, spm): # an isbn, count_matrix, p_matrix, isb
     print('Books similar to', itt[key] + ':')
     print('-----------------' + '-' * (len(itt[key]) + 1))
     for i in range(5):
-        print(str(i) + ':')
-        print(' ', bk_lst[i][0], '--', itt[bk_lst[i][1]][:80])
-        print('  spm:', itt[spm[key][i]][:80])
-        print('  p_matrix:', pm.loc[key, bk_lst[i][1]])
+        print(str(i+1) + ':')
+       #print(' ', bk_lst[i][0], '--', itt[bk_lst[i][1]][:80])
+        print(' Title:', itt[bk_lst[i][1]][:80])
+       #print('  spm:', itt[spm[key][i]][:80])
+        print(' p_matrix:', pm.loc[key, bk_lst[i][1]])
 
 ############################### MAIN #####################################        
     
